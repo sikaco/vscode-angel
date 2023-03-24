@@ -9,13 +9,19 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:yourExtensionName.showFloatingUI"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "vscode-angel.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "vscode-angel.showFloatingUI",
+        "title": "Show Floating UI"
       }
     ]
   },
