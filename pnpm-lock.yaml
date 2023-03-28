@@ -10,6 +10,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.56.0
   '@typescript-eslint/parser': ^5.56.0
   '@vscode/test-electron': ^2.3.0
+  acorn: ^8.8.2
   axios: ^1.3.4
   eslint: ^8.36.0
   eslint-config-airbnb: ^19.0.4
@@ -33,6 +34,7 @@ specifiers:
 dependencies:
   '@types/react': registry.npmjs.org/@types/react/18.0.29
   '@types/react-dom': registry.npmjs.org/@types/react-dom/18.0.11
+  acorn: registry.npmjs.org/acorn/8.8.2
   axios: registry.npmjs.org/axios/1.3.4
   prettier: registry.npmjs.org/prettier/2.8.7
   react: registry.npmjs.org/react/18.2.0
@@ -727,7 +729,6 @@ packages:
     version: 8.8.2
     engines: {node: '>=0.4.0'}
     hasBin: true
-    dev: true
 
   registry.npmjs.org/agent-base/6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz}

@@ -4,8 +4,6 @@ import * as fs from 'fs'
 import * as React from 'react'
 import * as vscode from 'vscode'
 
-import { FloatingUI } from './FloatingUI'
-
 export function createWebView(context: vscode.ExtensionContext) {
   const panel = vscode.window.createWebviewPanel(
     'gpt3Review',
@@ -23,10 +21,11 @@ export function createWebView(context: vscode.ExtensionContext) {
     message => {
       switch (message.command) {
         case 'updateOutput':
-          panel.webview.postMessage({
-            command: 'updateOutput',
-            content: message.content
-          })
+          // panel.webview.postMessage({
+          //   command: 'updateOutput',
+          //   content: message.content
+          // })
+          console.log('gpt3Review: ', message.content)
           break
       }
     },

@@ -1,11 +1,14 @@
 import * as React from 'react'
 import * as vscode from 'vscode'
 
+type MessageEvent = any
+
 interface FloatingUIProps {
   output: string
+  window: any
 }
 
-export const FloatingUI: React.FC<FloatingUIProps> = ({ output }) => {
+export const FloatingUI: React.FC<FloatingUIProps> = ({ output, window }) => {
   const [reviewOutput, setReviewOutput] = React.useState(output)
 
   React.useEffect(() => {
