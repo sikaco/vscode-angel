@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode'
+import * as _ from 'lodash'
 import axios from 'axios'
 import * as acorn from 'acorn'
 import * as tsParser from '@typescript-eslint/parser'
@@ -18,7 +19,11 @@ async function checkCode(webView: vscode.WebviewPanel) {
   }
 
   const code = getFunctionCode(activeEditor, functionName)
-  const gpt3Review = await getGPT3Review(code)
+
+  console.log('propsprops', code)
+
+  // const gpt3Review = await getGPT3Review(code)
+  const gpt3Review = Math.random() * 100000
 
   webView.webview.postMessage({
     command: 'updateOutput',
@@ -51,19 +56,19 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(disposable)
 
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument(async e => {
-      const editor = vscode.window.activeTextEditor
-      if (editor && e.document === editor.document) {
-        // const functionName = getCurrentFunctionName(editor)
-        // if (functionName) {
-        //   const functionCode = getFunctionCode(editor, functionName)
-        //   await fetchGpt3Review(functionCode)
-        // }
-        checkCode(webView)
-      }
-    })
-  )
+  const onTextChange = _.debounce(async e => {
+    const editor = vscode.window.activeTextEditor
+    if (editor && e.document === editor.document) {
+      // const functionName = getCurrentFunctionName(editor)
+      // if (functionName) {
+      //   const functionCode = getFunctionCode(editor, functionName)
+      //   await fetchGpt3Review(functionCode)
+      // }
+      checkCode(webView)
+    }
+  }, 1000)
+
+  context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(onTextChange))
 }
 
 // This method is called when your extension is deactivated
