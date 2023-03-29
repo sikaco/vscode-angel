@@ -22,8 +22,8 @@ async function checkCode(webView: vscode.WebviewPanel) {
 
   console.log('propsprops', code)
 
-  // const gpt3Review = await getGPT3Review(code)
-  const gpt3Review = Math.random() * 100000
+  const gpt3Review = await getGPT3Review(code)
+  // const gpt3Review = Math.random() * 100000
 
   webView.webview.postMessage({
     command: 'updateOutput',
@@ -59,11 +59,6 @@ export function activate(context: vscode.ExtensionContext) {
   const onTextChange = _.debounce(async e => {
     const editor = vscode.window.activeTextEditor
     if (editor && e.document === editor.document) {
-      // const functionName = getCurrentFunctionName(editor)
-      // if (functionName) {
-      //   const functionCode = getFunctionCode(editor, functionName)
-      //   await fetchGpt3Review(functionCode)
-      // }
       checkCode(webView)
     }
   }, 1000)
@@ -90,7 +85,8 @@ async function getGPT3Review(code: string): Promise<string> {
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GPT_API_KEY}`
+          // Authorization: `Bearer ${process.env.GPT_API_KEY}`
+          Authorization: `Bearer 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`
         }
       }
     )
