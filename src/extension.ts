@@ -2,9 +2,9 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode'
 import * as _ from 'lodash'
-import axios from 'axios'
 import * as acorn from 'acorn'
 import * as tsParser from '@typescript-eslint/parser'
+import { Configuration, CreateCompletionRequest, OpenAIApi } from 'openai'
 
 import { createWebView } from './webview'
 
@@ -19,8 +19,7 @@ async function checkCode(webView: vscode.WebviewPanel) {
   }
 
   const code = getFunctionCode(activeEditor, functionName)
-
-  console.log('propsprops', code)
+  // console.log('propsprops', code)
 
   const gpt3Review = await getGPT3Review(code)
   // const gpt3Review = Math.random() * 100000
@@ -41,9 +40,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   const webView = createWebView(context)
 
-  setInterval(async () => {
-    checkCode(webView)
-  }, 10000)
+  // setInterval(async () => {
+  //   checkCode(webView)
+  // }, 10000)
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
@@ -61,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
     if (editor && e.document === editor.document) {
       checkCode(webView)
     }
-  }, 1000)
+  }, 300)
 
   context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(onTextChange))
 }
@@ -72,25 +71,53 @@ export function deactivate() {
   console.log('extension ended.')
 }
 
-async function getGPT3Review(code: string): Promise<string> {
-  // 在此实现调用GPT-3.5 API的逻辑
-  const prompt = `请评价以下代码:\n\n${code}\n\n评价：`
+async function fetchCompletion(prompt: string, apiKey: string) {
+  const configuration = new Configuration({
+    organization: 'org-IYj8QPEfG9PVe4WzLJGZTsqz',
+    apiKey
+  })
+
+  // 创建OpenAI API客户端实例
+  const openaiApi = new OpenAIApi(configuration)
+
+  // 定义选项参数
+  const options: CreateCompletionRequest = {
+    model: 'text-davinci-003',
+    prompt: prompt, // 提示
+    max_tokens: 150, // 生成的最大令牌数
+    n: 3, // 生成的完成数量
+    stop: null, // 结束序列
+    temperature: 0 // 控制随机性的温度
+  }
+
   try {
-    const response = await axios.post(
-      'https://api.openai.com/v1/engines/davinci-codex/completions',
-      {
-        prompt: prompt,
-        max_tokens: 50
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          // Authorization: `Bearer ${process.env.GPT_API_KEY}`
-          Authorization: `Bearer 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`
-        }
-      }
-    )
-    return response.data.choices[0].text.trim()
+    // 调用API并获取响应
+    const response = await openaiApi.createCompletion(options)
+    const text = response.data.choices[0].text
+
+    // 返回生成的文本
+    return text
+  } catch (error) {
+    console.error('Error:', error)
+    return null
+  }
+}
+
+async function getGPT3Review(code: string) {
+  // 在此实现调用GPT-3.5 API的逻辑
+  const prompt = `请假设你的角色是一个傲娇且毒蛇的大奶女仆，然后用这样的口吻来评价以下代码，并给出改进建议:\n\n${code}\n\n`
+  try {
+    // process.env.OPENAI_API_KEY
+    const apiKey = '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' // 替换为你的OpenAI API密钥
+    const completion = await fetchCompletion(prompt, apiKey)
+
+    if (completion) {
+      console.log('Generated text:', completion)
+    } else {
+      console.log('Failed to generate text.')
+    }
+
+    return completion
   } catch (error) {
     console.error('Error calling GPT-3.5 API:', error)
     return '无法获取评价'
@@ -103,11 +130,15 @@ function getAst(document: vscode.TextDocument) {
 
   let ast
 
-  if (languageId === 'javascript') {
-    ast = acorn.parse(code, { ecmaVersion: 2022, sourceType: 'module' })
-  } else if (languageId === 'typescript') {
-    ast = tsParser.parse(code, { sourceType: 'module' })
-  } else {
+  try {
+    if (languageId === 'javascript') {
+      ast = acorn.parse(code, { ecmaVersion: 2022, sourceType: 'module' })
+    } else if (languageId === 'typescript') {
+      ast = tsParser.parse(code, { sourceType: 'module' })
+    } else {
+      return null
+    }
+  } catch (error) {
     return null
   }
 

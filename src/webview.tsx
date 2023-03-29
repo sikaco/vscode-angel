@@ -1,16 +1,18 @@
 import * as path from 'path'
-import * as fs from 'fs'
+// import * as fs from 'fs'
 
-import * as React from 'react'
+// import * as React from 'react'
 import * as vscode from 'vscode'
 
 export function createWebView(context: vscode.ExtensionContext) {
   const panel = vscode.window.createWebviewPanel(
     'gpt3Review',
-    'GPT-3.5 代码评价',
+    '程序员鼓励大师',
     vscode.ViewColumn.Beside,
     {
-      enableScripts: true
+      enableScripts: true,
+      retainContextWhenHidden: true, // 保持UI状态，即使面板不可见
+      localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')] // Webview允许访问的资源路径
     }
   )
 
@@ -21,11 +23,8 @@ export function createWebView(context: vscode.ExtensionContext) {
     message => {
       switch (message.command) {
         case 'updateOutput':
-          // panel.webview.postMessage({
-          //   command: 'updateOutput',
-          //   content: message.content
-          // })
-          console.log('gpt3Review: ', message.content)
+          vscode.window.showInformationMessage(message.content)
+          console.log('propsprops', message)
           break
       }
     },
@@ -46,10 +45,11 @@ function getWebViewHtml(extensionPath: string): string {
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content = "width=device-width, initial-scale=1.0" />
-          <title>GPT - 3.5 代码评价 </title>
+          <title>GPT 魔法少女</title>
         </head>
         <body><div id="root"></div>
           <script src="${scriptUri}"></script >
+          <script src="https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
         </body>
     </html>
   `
