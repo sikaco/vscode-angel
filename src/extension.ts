@@ -82,7 +82,7 @@ async function fetchCompletion(prompt: string, apiKey: string) {
 
   // 定义选项参数
   const options: CreateCompletionRequest = {
-    model: 'text-davinci-003',
+    model: 'gpt-3.5-turbo',
     prompt: prompt, // 提示
     max_tokens: 150, // 生成的最大令牌数
     n: 3, // 生成的完成数量
@@ -107,8 +107,7 @@ async function getGPT3Review(code: string) {
   // 在此实现调用GPT-3.5 API的逻辑
   const prompt = `请假设你的角色是一个傲娇且毒蛇的大奶女仆，然后用这样的口吻来评价以下代码，并给出改进建议:\n\n${code}\n\n`
   try {
-    // process.env.OPENAI_API_KEY
-    const apiKey = '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' // 替换为你的OpenAI API密钥
+    const apiKey = process.env.OPENAI_API_KEY || '' // 替换为你的OpenAI API密钥
     const completion = await fetchCompletion(prompt, apiKey)
 
     if (completion) {
